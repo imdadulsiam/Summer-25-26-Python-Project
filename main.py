@@ -1,4 +1,8 @@
-#main.py
+# main.py
+import tkinter as tk
+from gui_interface import SecurityAppGUI
+from file_handler import save_hosts_to_file, load_hosts_from_file
+from analytics import show_analytics_dashboard
 
 class NetworkHost:
     """a single network device under security analysis."""
@@ -27,7 +31,7 @@ class NetworkHost:
         8843: "HTTPS-Alt",
     }
 
-    def __init__(self, ip_address: str, open_ports: list):
+    def __init__(self, ip_address: str, operating_system: str):
         # instance variables
         self.ip_address = ip_address
         self.operating_system: str = operating_system
@@ -35,14 +39,14 @@ class NetworkHost:
         self.risk_level: str = "Low"
         self.dangerous_ports_found: list = [] # feature  tracker
 
-    def add_port(self, port_number: int) ->None:
+    def add_port(self, port_number: int) -> None:
         """ Host  a unique port to the profile if not already present."""
         if port_number not in self.open_ports:
             self.open_ports.append(port_number)
             if port_number in NetworkHost.DANGEROUS_PORTS:
                 vuln_desc = f"Port {port_number}: {NetworkHost.DANGEROUS_PORTS[port_number]} "
                 self.dangerous_ports_found.append(vuln_desc)
-                self.calculate_risk()
+            self.calculate_risk()
 
     def calculate_risk(self) -> None:
         """Ecaluates security thereat levels dynamically"""
@@ -55,6 +59,7 @@ class NetworkHost:
             self.risk_level = "Medium"
         else:
             self.risk_level = "High"
+
     def to_dictionary(self) -> dict:
         """returns a dictionary representation of the host profile."""
         return {
@@ -64,3 +69,20 @@ class NetworkHost:
             "risk_level": self.risk_level,
             "dangerous_ports_found": self.dangerous_ports_found
         }
+
+
+def main():
+    """Application entry point connecting data persistence, GUI, and analytics."""
+    active_inventory = load_hosts_from_file()
+
+    root = tk.Tk()
+    app = SecurityAppGUI(
+        root=root,
+        hosts_list=active_inventory,
+        save_callback=save_hosts_to_file,
+        analytics_callback=show_analytics_dashboard
+    )
+    root.mainloop()
+
+if __name__ == "__main__":
+    main()
