@@ -40,7 +40,7 @@ def show_analytics_dashboard(hosts_list: list) -> None:
         font=("Helvetica", 12, "bold"), 
         bg="#111827", 
         fg="white", 
-        py=8
+        pady=8  # Fixed py=8 to pady=8
     )
     title.pack(fill=tk.X)
 
