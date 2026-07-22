@@ -73,14 +73,15 @@ class NetworkHost:
 
 def main():
     """Application entry point connecting data persistence, GUI, and analytics."""
-    active_inventory = load_hosts_from_file()
+    active_inventory = load_hosts_from_file(NetworkHost)
 
     root = tk.Tk()
     app = SecurityAppGUI(
         root=root,
-        hosts_list=active_inventory,
+        host_list=active_inventory,
         save_callback=save_hosts_to_file,
-        analytics_callback=show_analytics_dashboard
+        analytics_callback=show_analytics_dashboard,
+        network_host_cls=NetworkHost
     )
     root.mainloop()
 
