@@ -1,18 +1,16 @@
 # gui_interface.py
-from logging import root
 import tkinter as tk
 from tkinter import ttk, messagebox
-from typing import Self
-from main import NetworkHost 
 
 class SecurityAppGUI:
     """Graphical User Interface for the Network Security Application."""
 
-    def __init__(self, root, host_list, save_callback, analytics_callback):
+    def __init__(self, root, host_list, save_callback, analytics_callback, network_host_cls):
         self.root = root
         self.host_list = host_list
         self.save_callback = save_callback
         self.analytics_callback = analytics_callback
+        self.NetworkHost = network_host_cls  # Passed directly from main.py to prevent circular imports
         self.root.title("Cybersecurity Vulnerability Auditor")
         self.root.geometry("750x550")
         self.root.resizable(False, False)
@@ -24,7 +22,7 @@ class SecurityAppGUI:
             font=("Helvetica", 16, "bold"),
             bg="#1f2937",
             fg="white",
-            py=10
+            pady=10  # Fixed: changed 'py=10' to 'pady=10'
         )
         title_lable.pack(fill=tk.X)
 
@@ -99,7 +97,7 @@ class SecurityAppGUI:
             messagebox.showerror("Invalid Input", "Please enter the operating system.")
             return
          
-        new_host = NetworkHost(ip, os)
+        new_host = self.NetworkHost(ip, os)
 
         if ports:
             ports_items = ports.split(",")
