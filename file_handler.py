@@ -1,0 +1,39 @@
+#file_handeler.py
+import json
+from main import NetworkHost
+DATA_FILE = 'network_inventory.json'
+
+def save_hosts_to_file(host_list: list) ->None:
+    """Converts a list of NetworkHost objects to a list of dictionaries and saves it to a JSON file."""
+    try:
+        serializable_data = [host.to.dictionary() for host in host_list]
+        with open(DATA_FILE, 'w') as f:
+            json.dump(serializable_data, f, indent=4)
+           print("[Storage] Inventory successfully saved to database file.")
+        except IOError as e:
+            print(f"[Error]Failed to write data to file:{e}")
+        except Exception as e:
+            print(f"[Unexpected Error] Could not save data: {e}")
+
+ def load_hosts_from_file() -> list:
+    """Loads saved host records from the JSON database with error handling."""
+    loaded_hosts = []
+    try:
+        with open(DATA_FILE, "r") as f:
+        raw_data = json.load(f)
+        for item in raw_data:
+            host = NetworkHost(item["ip_address"], item["operating_system"])
+                host.open_ports = item.get("open_ports", [])
+                host.dangerous_ports_found = item.get("dangerous_ports_found", [])
+                host.risk_level = item.get("risk_level", "Low")
+                loaded_hosts.append(host)
+
+        print("[Storage] Persistent records loaded successfully.")
+    except FileNotFoundError:
+        print("[Storage] No existing database file found. Starting fresh inventory.")
+    except json.JSONDecodeError:
+        print("[Warning] Database file is corrupted or improperly formatted. Starting fresh inventory.")
+    except Exception as e:
+        print(f"[Unexpected Error] Failed to load database: {e}")
+        
+    return loaded_hosts
