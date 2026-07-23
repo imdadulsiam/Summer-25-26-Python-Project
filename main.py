@@ -72,9 +72,10 @@ class NetworkHost:
 
 
 def main():
-    """Application entry point connecting data persistence, GUI, and analytics."""
+    # load saved inventory from json
     active_inventory = load_hosts_from_file(NetworkHost)
 
+    # launch gui
     root = tk.Tk()
     app = SecurityAppGUI(
         root=root,

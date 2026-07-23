@@ -1,0 +1,56 @@
+[
+    {
+        "ip_address": "192.168.1.10",
+        "operating_system": "Linux",
+        "open_ports": [],
+        "risk_level": "Low",
+        "dangerous_ports_found": []
+    },
+    {
+        "ip_address": "192.168.1.20",
+        "operating_system": "Windows",
+        "open_ports": [
+            80,
+            433
+        ],
+        "risk_level": "Medium",
+        "dangerous_ports_found": []
+    },
+    {
+        "ip_address": "10.0.0.5",
+        "operating_system": "Linux",
+        "open_ports": [
+            21,
+            22,
+            23,
+            8080
+        ],
+        "risk_level": "High",
+        "dangerous_ports_found": []
+    },
+    {
+        "ip_address": "192.168.40.60",
+        "operating_system": "Mac",
+        "open_ports": [
+            80,
+            23,
+            22,
+            8080
+        ],
+        "risk_level": "High",
+        "dangerous_ports_found": []
+    },
+    {
+        "ip_address": "192.50.124.60",
+        "operating_system": "Windows",
+        "open_ports": [
+            25,
+            80,
+            3994
+        ],
+        "risk_level": "High",
+        "dangerous_ports_found": [
+            "Port 80: HTTP "
+        ]
+    }
+]

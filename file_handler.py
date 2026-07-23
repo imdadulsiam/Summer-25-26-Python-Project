@@ -4,7 +4,7 @@ import json
 DATA_FILE = 'network_inventory.json'
 
 def save_hosts_to_file(host_list: list) -> None:
-    """Converts a list of NetworkHost objects to a list of dictionaries and saves it to a JSON file."""
+    # save all hosts to json file
     try:
         serializable_data = [host.to_dictionary() for host in host_list]
         with open(DATA_FILE, 'w') as f:
@@ -16,12 +16,13 @@ def save_hosts_to_file(host_list: list) -> None:
         print(f"[Unexpected Error] Could not save data: {e}")
 
 def load_hosts_from_file(network_host_cls) -> list:
-    """Loads saved host records from the JSON database with error handling."""
+    # load saved hosts back into memory
     loaded_hosts = []
     try:
         with open(DATA_FILE, "r") as f:
             raw_data = json.load(f)
             for item in raw_data:
+                # recreate object using passed class to avoid import issue
                 host = network_host_cls(item["ip_address"], item.get("operating_system", "Unknown"))
                 host.open_ports = item.get("open_ports", [])
                 host.dangerous_ports_found = item.get("dangerous_ports_found", [])

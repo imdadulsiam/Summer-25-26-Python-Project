@@ -3,53 +3,52 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 
 class SecurityAppGUI:
-    """Graphical User Interface for the Network Security Application."""
+    # main GUI window class
 
     def __init__(self, root, host_list, save_callback, analytics_callback, network_host_cls):
         self.root = root
         self.host_list = host_list
         self.save_callback = save_callback
         self.analytics_callback = analytics_callback
-        self.NetworkHost = network_host_cls  # Passed directly from main.py to prevent circular imports
+        self.NetworkHost = network_host_cls  # pass class from main to stop circular import
+        
         self.root.title("Cybersecurity Vulnerability Auditor")
         self.root.geometry("750x550")
         self.root.resizable(False, False)
 
-        # Title Banner 
+        # title label 
         title_lable = tk.Label(
             root,
             text="Cybersecurity Vulnerability Auditor",
             font=("Helvetica", 16, "bold"),
             bg="#1f2937",
             fg="white",
-            pady=10  # Fixed: changed 'py=10' to 'pady=10'
+            pady=10
         )
         title_lable.pack(fill=tk.X)
 
-        # Input Frame
+        # input form section
         input_frame = tk.LabelFrame(root, text="Add New Target Asset", font=("Helvetica", 10, "bold"), padx=15, pady=10)
         input_frame.pack(fill=tk.X, padx=15, pady=10)
 
-        # IP Entry
+        # inputs
         tk.Label(input_frame, text="IP Address:").grid(row=0, column=0, sticky=tk.W, pady=5)
         self.ip_entry = tk.Entry(input_frame, width=18)
         self.ip_entry.grid(row=0, column=1, padx=5, pady=5)
 
-        # OS Entry
         tk.Label(input_frame, text="OS (Windows/Linux/Mac):").grid(row=0, column=2, sticky=tk.W, pady=5)
         self.os_entry = tk.Entry(input_frame, width=18)
         self.os_entry.grid(row=0, column=3, padx=5, pady=5)
 
-        # Ports Entry
         tk.Label(input_frame, text="Open Ports (comma-separated):").grid(row=1, column=0, sticky=tk.W, pady=5)
         self.ports_entry = tk.Entry(input_frame, width=40)
         self.ports_entry.grid(row=1, column=1, columnspan=3, sticky=tk.W, padx=5, pady=5)
         
-        # Add Button
+        # submit btn
         add_btn = tk.Button(input_frame, text="Register Asset", command=self.add_host, bg="#10b981", fg="white", font=("Helvetica", 10, "bold"))
         add_btn.grid(row=2, column=3, sticky=tk.E, pady=5)
      
-        # Table Display Frame
+        # treeview table frame
         table_frame = tk.LabelFrame(root, text=" Registered Active Assets ", font=("Helvetica", 10, "bold"), padx=10, pady=10)
         table_frame.pack(fill=tk.BOTH, expand=True, padx=15, pady=5)
      
@@ -62,7 +61,7 @@ class SecurityAppGUI:
 
         self.tree.pack(fill=tk.BOTH, expand=True)
 
-        # Action Buttons 
+        # buttons frame
         btn_frame = tk.Frame(root, pady=10)
         btn_frame.pack()
      
@@ -74,7 +73,7 @@ class SecurityAppGUI:
         self.refresh_tree()
      
     def validate_ip(self, ip: str) -> bool:
-        """Validate the IP address format."""
+        # basic ip check
         parts = ip.split(".")
         if len(parts) != 4:
             return False
@@ -84,12 +83,12 @@ class SecurityAppGUI:
             return False
          
     def add_host(self):
-        """Add a new host to the list after validation."""
+        # handle adding host from input form
         ip = self.ip_entry.get().strip()
         os = self.os_entry.get().strip()
         ports = self.ports_entry.get().strip()
 
-        # Validation
+        # simple validation checks
         if not self.validate_ip(ip):
             messagebox.showerror("Invalid Input", "Please enter a valid IP address.")
             return
@@ -115,24 +114,22 @@ class SecurityAppGUI:
         self.save_callback(self.host_list)
         self.refresh_tree()
 
-        # Clear Entries
+        # clear inputs
         self.ip_entry.delete(0, tk.END)
         self.os_entry.delete(0, tk.END)
         self.ports_entry.delete(0, tk.END)
         messagebox.showinfo("Success", f"Target asset {ip} registered successfully.")
 
     def refresh_tree(self):
-        """Refreshes tree contents with current memory state"""
+        # refresh table contents
         for row in self.tree.get_children():
             self.tree.delete(row)
 
         for host in self.host_list:
             ports_str = ", ".join(map(str, host.open_ports)) if host.open_ports else "None"
             vulns_str = f"{len(host.dangerous_ports_found)} Detected" if host.dangerous_ports_found else "Clean"
-            # Host attribute compatibility fallback (host.os or host.operating_system)
             host_os = getattr(host, 'os', getattr(host, 'operating_system', 'Unknown'))
             self.tree.insert("", tk.END, values=(host.ip_address, host_os, host.risk_level, ports_str, vulns_str))
 
     def show_analytics(self):
-        """Trigger the analytics dashboard callback."""
         self.analytics_callback(self.host_list)
